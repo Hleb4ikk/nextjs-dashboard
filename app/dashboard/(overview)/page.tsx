@@ -2,11 +2,13 @@ import { Card } from '@/app/ui/dashboard/cards';
 import RevenueChart from '@/app/ui/dashboard/revenue-chart';
 import LatestInvoices from '@/app/ui/dashboard/latest-invoices';
 import { lusitana } from '@/app/ui/fonts';
-import { fetchRevenue, fetchLatestInvoices, fetchCardData } from '@/app/lib/data';
+import { fetchLatestInvoices, fetchCardData } from '@/app/lib/data';
+import { Suspense } from 'react'; //we are waiting for some condition and load the component
+import { RevenueChartSkeleton } from '@/app/ui/skeletons';
 
 export default async function Page() {
 //  fetching "waterfall"
-  const revenue = await fetchRevenue();
+
   const latestInvoices = await fetchLatestInvoices();
 
 //   My solving
@@ -38,7 +40,10 @@ const {
         /> 
       </div>
       <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-4 lg:grid-cols-8">
-         <RevenueChart revenue={revenue}  /> 
+        {/*show RevenueChartSkeleton while RevenueChart is loading and don't touch the other elements of the page */}
+        <Suspense fallback={<RevenueChartSkeleton />}>
+          <RevenueChart />
+        </Suspense>
          <LatestInvoices latestInvoices={latestInvoices} />
       </div>
     </main>
